@@ -32,6 +32,16 @@ class Url(object):
       netloc = '{0}:{1}'.format(netloc, self.port)
     return netloc
 
+  @netloc.setter
+  def netloc(self, netloc):
+    if not netloc.startswith('//'):
+      netloc = '//{0}'.format(netloc)
+    url = urlparse.urlparse(netloc)
+    self.hostname = url.hostname
+    self.username = url.username
+    self.password = url.password
+    self.port = url.port
+
   @property
   def __user_pass(self):
     # TODO: Escape the username and password (using urllib.quote?).

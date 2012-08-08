@@ -47,6 +47,54 @@ def test_netloc_errors():
   assert_raises(ValueError, getattr, Url(password='pass', hostname='example.com'), 'netloc')
 
 
+class TestSetNetloc():
+
+  def test_set_netloc_on_new_url(self):
+    url = Url()
+    url.netloc = 'example.com'
+    assert_equal(url.username, None)
+    assert_equal(url.password, None)
+    assert_equal(url.hostname, 'example.com')
+    assert_equal(url.port, None)
+
+    url = Url()
+    url.netloc = 'user@example.com'
+    assert_equal(url.username, 'user')
+    assert_equal(url.password, None)
+    assert_equal(url.hostname, 'example.com')
+    assert_equal(url.port, None)
+
+    url = Url()
+    url.netloc = 'user:password@example.com'
+    assert_equal(url.username, 'user')
+    assert_equal(url.password, 'password')
+    assert_equal(url.hostname, 'example.com')
+    assert_equal(url.port, None)
+
+    url = Url()
+    url.netloc = 'user:password@example.com:80'
+    assert_equal(url.username, 'user')
+    assert_equal(url.password, 'password')
+    assert_equal(url.hostname, 'example.com')
+    assert_equal(url.port, 80)
+
+    url = Url()
+    url.netloc = '//user:password@example.com:80'
+    assert_equal(url.username, 'user')
+    assert_equal(url.password, 'password')
+    assert_equal(url.hostname, 'example.com')
+    assert_equal(url.port, 80)
+
+  def test_overwrite_existing_netloc(self):
+    url = Url.from_string('ftp://guest:@ftp.example.com:8000/path/to/my/file.txt')
+    url.netloc = 'ftp2.example.com:2100'
+    assert_equal(url.username, None)
+    assert_equal(url.password, None)
+    assert_equal(url.hostname, 'ftp2.example.com')
+    assert_equal(url.port, 2100)
+    assert_equal(str(url), 'ftp://ftp2.example.com:2100/path/to/my/file.txt')
+
+
 def test_stringify():
   assert_equal(
     str(Url(scheme='http', username='username', password='password', hostname='example.com', port=80, path='/index.html', fragment='anchor')),
