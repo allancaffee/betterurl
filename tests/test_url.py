@@ -115,3 +115,14 @@ def test_from_string():
     Url.from_string('http://example.com/index.html?sort=foo#anchor'),
     Url(scheme='http', hostname='example.com', path='/index.html', query='sort=foo', fragment='anchor'),
   )
+
+
+def test_repr():
+  assert_equal(
+    repr(Url(scheme='http', username='username', password='password', hostname='example.com', port=80, path='/index.html', fragment='anchor')),
+    "Url(scheme='http', username='username', password='password', hostname='example.com', port=80, path='/index.html', fragment='anchor')",
+  )
+  assert_equal(
+    repr(Url(scheme='http', hostname='example.com', path='/index.html', query='sort=foo&order=desc')),
+    "Url(scheme='http', hostname='example.com', path='/index.html', query='sort=foo&order=desc')",
+  )

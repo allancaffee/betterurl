@@ -84,4 +84,20 @@ class Url(object):
     return str(self) == str(other)
 
   def __repr__(self):
-    return str(self)
+    constructor_args = (
+      'scheme',
+      'username',
+      'password',
+      'hostname',
+      'port',
+      'path',
+      'params',
+      'fragment',
+      'query',
+    )
+    def _value_for_field(field):
+      value = getattr(self, field)
+      if value is not None:
+        return '{0}={1!r}'.format(field, value)
+
+    return 'Url(' + ', '.join(filter(bool, (_value_for_field(field) for field in constructor_args))) + ')'
