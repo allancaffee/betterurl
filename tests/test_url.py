@@ -9,21 +9,21 @@ def test_netloc():
     'example.com',
   )
   assert_equal(
-    Url(username='user', password='password', hostname='example.com').netloc,
-    'user:password@example.com',
-  )
-  assert_equal(
     Url(username='user', hostname='example.com').netloc,
     'user@example.com',
+  )
+  assert_equal(
+    Url(username='user', password='password', hostname='example.com').netloc,
+    'user:password@example.com',
   )
   assert_equal(
     Url(hostname='example.com', port=80).netloc,
     'example.com:80',
   )
-  #eq_(
-  #  Url(username='username', password='password', hostname='example.com', port=80).netloc,
-  #  'username:password@example.com:80',
-  #)
+  assert_equal(
+    Url(username='username', password='password', hostname='example.com', port=80).netloc,
+    'username:password@example.com:80',
+  )
 
 def test_netloc_edges():
   # Empty username isn't the same as no username: http://tools.ietf.org/html/rfc1738#section-3.1
@@ -45,3 +45,25 @@ def test_netloc_edges():
 def test_netloc_errors():
   assert_raises(ValueError, getattr, Url(hostname=None), 'netloc')
   assert_raises(ValueError, getattr, Url(password='pass', hostname='example.com'), 'netloc')
+
+
+def test_stringify():
+  assert_equal(
+    str(Url(scheme='http', username='username', password='password', hostname='example.com', port=80, path='/index.html', fragment='anchor')),
+    'http://username:password@example.com:80/index.html#anchor',
+  )
+  assert_equal(
+    str(Url(scheme='http', hostname='example.com', path='/index.html', params='order=random;color=blue', query='sort=foo', fragment='anchor')),
+    'http://example.com/index.html;order=random;color=blue?sort=foo#anchor',
+  )
+  assert_equal(
+    str(Url(scheme='http', hostname='example.com', path='/index.html', query='sort=foo', fragment='anchor')),
+    'http://example.com/index.html?sort=foo#anchor',
+  )
+
+
+def test_from_string():
+  assert_equal(
+    Url.from_string('http://example.com/index.html?sort=foo#anchor'),
+    Url(scheme='http', hostname='example.com', path='/index.html', query='sort=foo', fragment='anchor'),
+  )
